@@ -1,2 +1,2 @@
-# onuorahpaschal-gmail.com
-covid19_app
+# covid19_app
+Data Collection/Analytics
