@@ -34,7 +34,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # custom apps
-    'ussd_screener.apps.UssdScreenerConfig'
+    'accounts.apps.AccountsConfig',
+    'ussd_screener.apps.UssdScreenerConfig',
+
+    # installed apps
+    'phonenumber_field',
+    'simple_history',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +71,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Database
