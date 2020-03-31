@@ -31,6 +31,7 @@ class Session(models.Model):
     user = models.ForeignKey(USSDUser, on_delete=models.CASCADE)
     survey = models.ForeignKey(Survey, related_name="sessions", on_delete=models.CASCADE)
     session_id = models.CharField(_("Session ID"), max_length=100, db_index=True)
+    previous_page_id = models.CharField(max_length=50, blank=True, default="")
 
     def __str__(self):
         return self.session_id
@@ -38,14 +39,15 @@ class Session(models.Model):
 
 class Page(models.Model):
     """
-    Keep track of each survey page and the one before it
+    Keep track of each survey page
     """
 
     created = models.DateTimeField(auto_now_add=True)
     page_num = models.CharField(_("number"), max_length=50, db_index=True)
     text = models.CharField(max_length=225)
+    extra_text = models.TextField(max_length=300, blank=True, default="")
     parent = models.ForeignKey(
-                        "self", related_name=_("previous_page"),
+                        "self", related_name=_("next_page"),
                         blank=True, null=True,
                         on_delete=models.CASCADE
                     )
@@ -53,7 +55,7 @@ class Page(models.Model):
     history = HistoricalRecords()
     
     class Meta:
-        ordering = ('-page_num',)
+        ordering = ('page_num',)
         get_latest_by = ('-created',)
 
     def __str__(self):
@@ -68,11 +70,11 @@ class Option(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     number = models.PositiveSmallIntegerField()
     text = models.CharField(max_length=225)
-    page = models.ForeignKey(Page, related_name="options", on_delete=models.CASCADE)
+    pages = models.ManyToManyField(Page, related_name="options", related_query_name="options")
     history = HistoricalRecords()
     
     class Meta:
-        ordering = ('-page', 'number')
+        ordering = ('number',)
         get_latest_by = ('-created',)
 
     def __str__(self):

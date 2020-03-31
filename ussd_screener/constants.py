@@ -1035,3 +1035,21 @@ STATES = [
         }
     }
 ]
+
+LANG_DICT = {
+    "1": "English",
+    "2": "Yoruba",
+    "3": "Igbo",
+    "4": "Hausa"
+}
+
+SYMPTOMS = {
+    "4": 'fever',
+    "5": "cough",
+    "6": "tiredness",
+    "7": "difficult_breath",
+    "8": "sore_throat",
+    "9": "trip_with_case",
+    "10": "primary_contact",
+    "11": "secondary_contact"
+}
