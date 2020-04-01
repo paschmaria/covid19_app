@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Option, Page, Survey, Session
+from .models import Option, Page, Session, Survey
 
 
 class OptionAdmin(admin.ModelAdmin):
@@ -24,7 +24,9 @@ class SurveyAdmin(admin.ModelAdmin):
     pass
 
 class SessionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('session_id', 'user', 'survey', 'prev_page_id')
+    search_fields = ('user', 'survey')
+    ordering = ('-created',)
 
 admin.site.register(Option, OptionAdmin)
 admin.site.register(Page, PageAdmin)

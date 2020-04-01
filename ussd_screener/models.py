@@ -31,7 +31,7 @@ class Session(models.Model):
     user = models.ForeignKey(USSDUser, on_delete=models.CASCADE)
     survey = models.ForeignKey(Survey, related_name="sessions", on_delete=models.CASCADE)
     session_id = models.CharField(_("Session ID"), max_length=100, db_index=True)
-    previous_page_id = models.CharField(max_length=50, blank=True, default="")
+    prev_page_id = models.CharField(max_length=50, blank=True, default="")
 
     def __str__(self):
         return self.session_id

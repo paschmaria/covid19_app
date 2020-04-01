@@ -1,41 +1,14 @@
-from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from accounts.models import HealthStatus
 from accounts.utils import get_ussd_user
 
-from .constants import LANG_DICT, SYMPTOMS
+from .constants import LANG_DICT
 from .models import Option, Page, Session, Survey
-from .utils import get_list, get_state_lga, log_survey_session
-
-
-def get_text(text, part):
-    text = text.split("*")
-    return "*".join(text[:part])
-
-def get_response_text(page):
-    response  = f"{page.text} \n"
-    response += "" if page.extra_text == "" else f"{page.extra_text} \n"
-    return response
-
-def get_response(obj, page_num):
-    page = obj.get(page_num=page_num)
-    response = get_response_text(page)
-
-    for option in page.options.all():
-        response += f"{option} \n"
-
-    return response
-
-def update_status(text_list, obj, index):
-    # if option is 1
-    if text_list[-1] == "1":
-        setattr(obj, SYMPTOMS[index], True)
-    # if option is 2
-    elif text_list[-1] == "2":
-        setattr(obj, SYMPTOMS[index], False)
-    obj.save()
+from .utils import (get_response, get_response_text, get_state_lga, get_text,
+                    log_survey_session, update_status)
 
 
 def process_request(data):
@@ -52,7 +25,7 @@ def process_request(data):
     text_list = text.split("*")
     page = ""
     response = ""
-    print(text_list, len(text_list))
+    # print(text_list, len(text_list))
 
     if text == "":
         response = get_response(pages, "0")
@@ -119,18 +92,85 @@ def process_request(data):
 
             return response
         else:
-            if text_list[-3] == "0" or text_list[-3] == "99":
-                print("got here")
+            prev_page_list = session.prev_page_id.split("*")
+
+            if len(prev_page_list) > 1:
+                diff = len(text_list) - len(prev_page_list)
+
+                if diff >= 1:
+                    diff = diff + 3
+
+                    for i in range(4, 12):
+                        if i < 11:
+                        # if split text length equals symptom key
+                            if diff == i:
+                                update_status(text_list, health_status, str(i))
+                                response = get_response(
+                                                pages, f"1*{i-1}"
+                                            )
+                                return response
+                        else:
+                            if (
+                                health_status.risk_level == "high" or
+                                health_status.risk_level == "very high"
+                            ):
+                                # send mail or sms
+                                response = get_response(
+                                                pages, f"1*{i-1}"
+                                            )
+                            elif health_status.risk_level == "medium":
+                                response = get_response(
+                                                pages, f"1*{i}"
+                                            )
+                            else:
+                                response = get_response(
+                                                pages, f"1*{i+1}"
+                                            )
+
+                            return response
+            
             else:
                 for i in range(1, 21):
                     if i == int(option):
                         user.lga = lgas[int(option)-1]['name']
                         user.save()
+                        session.prev_page_id = text
+                        session.save()
                         response = get_response(
                             pages, "1*2"
                         )
                         return response
 
+    elif get_text(text, 3) == "1*1*1":
+        for i in range(4, 12):
+            if i < 11:
+                # if split text length equals symptom key
+                if len(text_list) == i:
+                    update_status(text_list, health_status, str(i))
+                    response = get_response(
+                                    pages, f"1*{i-1}"
+                                )
+                    return response
+            else:
+                if (
+                    health_status.risk_level == "high" or
+                    health_status.risk_level == "very high"
+                ):
+                    # send mail or sms
+                    response = get_response(
+                                    pages, f"1*{i-1}"
+                                )
+                elif health_status.risk_level == "medium":
+                    response = get_response(
+                                    pages, f"1*{i}"
+                                )
+                else:
+                    response = get_response(
+                                    pages, f"1*{i+1}"
+                                )
+
+                return response
+    
     elif text == "1*1*2":
         response = get_response(
                         pages, "1*2"
