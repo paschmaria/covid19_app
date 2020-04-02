@@ -115,7 +115,7 @@ def process_request(data):
                                 health_status.risk_level == "high" or
                                 health_status.risk_level == "very high"
                             ):
-                                send_mail_to_admin.delay(user_id=user.id)
+                                # send_mail_to_admin.delay(user_id=user.id)
                                 response = get_response(
                                                 pages, f"1*{i-1}"
                                             )
@@ -157,7 +157,7 @@ def process_request(data):
                     health_status.risk_level == "high" or
                     health_status.risk_level == "very high"
                 ):
-                    send_mail_to_admin.delay(user_id=user.id)
+                    # send_mail_to_admin.delay(user_id=user.id)
                     response = get_response(
                                     pages, f"1*{i-1}"
                                 )
@@ -193,7 +193,7 @@ def process_request(data):
                     health_status.risk_level == "high" or
                     health_status.risk_level == "very high"
                 ):
-                    send_mail_to_admin.delay(user_id=user.id)
+                    # send_mail_to_admin.delay(user_id=user.id)
                     response = get_response(
                                     pages, f"1*{i-1}"
                                 )
