@@ -78,4 +78,4 @@ class Option(models.Model):
         get_latest_by = ('-created',)
 
     def __str__(self):
-        return f"{self.number}. {self.text}"
+        return f"{self.number}.{self.text}"
