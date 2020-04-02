@@ -1,5 +1,10 @@
 import os
 
+import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+
 from .base import *
 
 DEBUG = False
@@ -43,3 +48,14 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Lagos'
+
+
+# Sentry
+sentry_sdk.init(
+    dsn="https://d5e034415489460c88bc7bb6904904fb@sentry.io/5186226",
+    integrations=[
+        DjangoIntegration(),
+        CeleryIntegration(),
+        RedisIntegration()
+    ]
+)
