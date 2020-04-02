@@ -114,7 +114,11 @@ class USSDUser(BaseClass):
                         )
     state = models.CharField(max_length=50, blank=True, default='')
     lga = models.CharField(max_length=100, blank=True, default='')
-    health_status = models.ForeignKey(HealthStatus, related_name="respondent", on_delete=models.PROTECT)
+    health_status = models.ForeignKey(
+                            HealthStatus, 
+                            related_name="respondent",
+                            on_delete=models.PROTECT
+                        )
 
     class Meta:
         verbose_name = _("USSD User")

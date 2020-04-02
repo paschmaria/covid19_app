@@ -7,6 +7,7 @@ from accounts.utils import get_ussd_user
 
 from .constants import LANG_DICT
 from .models import Option, Page, Session, Survey
+from .tasks import send_mail_to_admin
 from .utils import (get_response, get_response_text, get_state_lga, get_text,
                     log_survey_session, update_status)
 
@@ -114,7 +115,7 @@ def process_request(data):
                                 health_status.risk_level == "high" or
                                 health_status.risk_level == "very high"
                             ):
-                                # send mail or sms
+                                send_mail_to_admin.delay(user_id=user.id)
                                 response = get_response(
                                                 pages, f"1*{i-1}"
                                             )
@@ -156,7 +157,7 @@ def process_request(data):
                     health_status.risk_level == "high" or
                     health_status.risk_level == "very high"
                 ):
-                    # send mail or sms
+                    send_mail_to_admin.delay(user_id=user.id)
                     response = get_response(
                                     pages, f"1*{i-1}"
                                 )
@@ -192,7 +193,7 @@ def process_request(data):
                     health_status.risk_level == "high" or
                     health_status.risk_level == "very high"
                 ):
-                    # send mail or sms
+                    send_mail_to_admin.delay(user_id=user.id)
                     response = get_response(
                                     pages, f"1*{i-1}"
                                 )
