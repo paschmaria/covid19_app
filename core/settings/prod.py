@@ -7,7 +7,7 @@ DEBUG = False
 
 # Application definition
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['covid19.paschal.xyz']
 
 
 # Database
