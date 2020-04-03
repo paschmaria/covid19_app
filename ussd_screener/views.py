@@ -12,6 +12,37 @@ from .utils import (get_response, get_response_text, get_state_lga, get_text,
                     log_survey_session, update_status)
 
 
+def get_health_status(condition, text_list, status, pages):
+    for i in range(4, 12):
+        if i < 11:
+            # if split text length equals symptom key
+            if condition == i:
+                update_status(text_list, status, str(i))
+                response = get_response(
+                                pages, f"1*{i-1}"
+                            )
+                return response
+        else:
+            if (
+                status.risk_level == "high" or
+                status.risk_level == "very high"
+            ):
+                # send_mail_to_admin.delay(user_id=user.id)
+                response = get_response(
+                                pages, f"1*{i-1}"
+                            )
+            elif status.risk_level == "medium":
+                response = get_response(
+                                pages, f"1*{i}"
+                            )
+            else:
+                response = get_response(
+                                pages, f"1*{i+1}"
+                            )
+
+            return response
+
+
 def process_request(data):
     session_id = data.get("sessionId")
     service_code = data.get("serviceCode")
@@ -100,36 +131,12 @@ def process_request(data):
 
                 if diff >= 1:
                     diff = diff + 3
+                    response = get_health_status(
+                                    diff, text_list,
+                                    health_status, pages
+                                )
+                    return response
 
-                    for i in range(4, 12):
-                        if i < 11:
-                        # if split text length equals symptom key
-                            if diff == i:
-                                update_status(text_list, health_status, str(i))
-                                response = get_response(
-                                                pages, f"1*{i-1}"
-                                            )
-                                return response
-                        else:
-                            if (
-                                health_status.risk_level == "high" or
-                                health_status.risk_level == "very high"
-                            ):
-                                # send_mail_to_admin.delay(user_id=user.id)
-                                response = get_response(
-                                                pages, f"1*{i-1}"
-                                            )
-                            elif health_status.risk_level == "medium":
-                                response = get_response(
-                                                pages, f"1*{i}"
-                                            )
-                            else:
-                                response = get_response(
-                                                pages, f"1*{i+1}"
-                                            )
-
-                            return response
-            
             else:
                 for i in range(1, 21):
                     if i == int(option):
@@ -143,35 +150,13 @@ def process_request(data):
                         return response
 
     elif get_text(text, 3) == "1*1*1":
-        for i in range(4, 12):
-            if i < 11:
-                # if split text length equals symptom key
-                if len(text_list) == i:
-                    update_status(text_list, health_status, str(i))
-                    response = get_response(
-                                    pages, f"1*{i-1}"
-                                )
-                    return response
-            else:
-                if (
-                    health_status.risk_level == "high" or
-                    health_status.risk_level == "very high"
-                ):
-                    # send_mail_to_admin.delay(user_id=user.id)
-                    response = get_response(
-                                    pages, f"1*{i-1}"
-                                )
-                elif health_status.risk_level == "medium":
-                    response = get_response(
-                                    pages, f"1*{i}"
-                                )
-                else:
-                    response = get_response(
-                                    pages, f"1*{i+1}"
-                                )
+        list_len = len(text_list)
+        response = get_health_status(
+                        list_len, text_list,
+                        health_status, pages
+                    )
+        return response
 
-                return response
-    
     elif text == "1*1*2":
         response = get_response(
                         pages, "1*2"
@@ -179,34 +164,12 @@ def process_request(data):
         return response
 
     elif get_text(text, 3) == "1*1*2":
-        for i in range(4, 12):
-            if i < 11:
-                # if split text length equals symptom key
-                if len(text_list) == i:
-                    update_status(text_list, health_status, str(i))
-                    response = get_response(
-                                    pages, f"1*{i-1}"
-                                )
-                    return response
-            else:
-                if (
-                    health_status.risk_level == "high" or
-                    health_status.risk_level == "very high"
-                ):
-                    # send_mail_to_admin.delay(user_id=user.id)
-                    response = get_response(
-                                    pages, f"1*{i-1}"
-                                )
-                elif health_status.risk_level == "medium":
-                    response = get_response(
-                                    pages, f"1*{i}"
-                                )
-                else:
-                    response = get_response(
-                                    pages, f"1*{i+1}"
-                                )
-
-                return response
+        list_len = len(text_list)
+        response = get_health_status(
+                        list_len, text_list,
+                        health_status, pages
+                    )
+        return response
 
     return response
 
@@ -214,8 +177,6 @@ def process_request(data):
 @csrf_exempt
 def ussd_callback(request):
     response = ""
-
     if request.method == 'POST':
         response = process_request(request.POST)
-
     return HttpResponse(response)
