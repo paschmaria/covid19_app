@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # installed apps
     'phonenumber_field',
     'simple_history',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [

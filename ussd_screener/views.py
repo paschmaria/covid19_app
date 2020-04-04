@@ -12,14 +12,14 @@ from .utils import (get_response, get_response_text, get_state_lga, get_text,
                     log_survey_session, update_status)
 
 
-def get_health_status(condition, text_list, status, pages):
+def get_health_status(condition, text_list, status, lang, pages):
     for i in range(4, 12):
         if i < 11:
             # if split text length equals symptom key
             if condition == i:
                 update_status(text_list, status, str(i))
                 response = get_response(
-                                pages, f"1*{i-1}"
+                                pages, f"{lang}*{i-1}"
                             )
                 return response
         else:
@@ -29,15 +29,15 @@ def get_health_status(condition, text_list, status, pages):
             ):
                 # send_mail_to_admin.delay(user_id=user.id)
                 response = get_response(
-                                pages, f"1*{i-1}"
+                                pages, f"{lang}*{i-1}"
                             )
             elif status.risk_level == "medium":
                 response = get_response(
-                                pages, f"1*{i}"
+                                pages, f"{lang}*{i}"
                             )
             else:
                 response = get_response(
-                                pages, f"1*{i+1}"
+                                pages, f"{lang}*{i+1}"
                             )
 
             return response
@@ -55,7 +55,7 @@ def process_request(data):
     session = log_survey_session(user, survey, session_id)
     pages = session.survey.pages
     text_list = text.split("*")
-    page = ""
+    lang_id = text_list[0]
     response = ""
     # print(text_list, len(text_list))
 
@@ -71,58 +71,43 @@ def process_request(data):
                     )
         return response
 
-    elif text == "1*1":
+    elif text == f"{lang_id}*1":
         response = get_response(
                         pages, text
                     )
         return response
 
-    elif text == "1*1*1" or text == "1*1*1*99*0":
+    elif text == f"{lang_id}*1*1" or text == f"{lang_id}*1*1*99*0":
         state, lgas = get_state_lga(24)
         user.state = state
         user.save()
-        page = pages.get(page_num="1*1*1")
-        response  = get_response_text(page)
-
-        for i in range(10):
-            response += f"{lgas[i]['id']}. {lgas[i]['name']} \n"
-        response += "99. Next"
-
+        response = get_response(
+                        pages, f"{lang_id}*1*1"
+                    )
         return response
 
-    elif text == "1*1*1*99": # if next lga page was selected
-        _, lgas = get_state_lga(24)
-        page = pages.get(page_num="1*1*1")
-        response  = get_response_text(page)
-
-        for i in range(10, 20):
-            response += f"{lgas[i]['id']}. {lgas[i]['name']} \n"
-        response += "0. Back"
-
+    elif text == f"{lang_id}*1*1*99": # if next lga page was selected
+        response = get_response(
+                        pages, f"{lang_id}*1*1*99"
+                    )
         return response
 
-    elif get_text(text, 4) == "1*1*1*99":
+    elif get_text(text, 4) == f"{lang_id}*1*1*99":
         _, lgas = get_state_lga(24)
         option = text_list[-1]
 
         if option == "0":
-            page = pages.get(page_num="1*1*1")
-            response  = get_response_text(page)
-
-            for i in range(10):
-                response += f"{lgas[i]['id']}. {lgas[i]['name']} \n"
-            response += "99. Next"
-
+            response = get_response(
+                        pages, f"{lang_id}*1*1"
+                    )
             return response
+
         elif option == "99":
-            page = pages.get(page_num="1*1*1")
-            response  = get_response_text(page)
-
-            for i in range(10, 20):
-                response += f"{lgas[i]['id']}. {lgas[i]['name']} \n"
-            response += "0. Back"
-
+            response = get_response(
+                        pages, f"{lang_id}*1*1*99"
+                    )
             return response
+
         else:
             prev_page_list = session.prev_page_id.split("*")
 
@@ -133,7 +118,7 @@ def process_request(data):
                     diff = diff + 3
                     response = get_health_status(
                                     diff, text_list,
-                                    health_status, pages
+                                    health_status, lang_id, pages
                                 )
                     return response
 
@@ -145,29 +130,29 @@ def process_request(data):
                         session.prev_page_id = text
                         session.save()
                         response = get_response(
-                            pages, "1*2"
+                            pages, f"{lang_id}*2"
                         )
                         return response
 
-    elif get_text(text, 3) == "1*1*1":
+    elif get_text(text, 3) == f"{lang_id}*1*1":
         list_len = len(text_list)
         response = get_health_status(
                         list_len, text_list,
-                        health_status, pages
+                        health_status, lang_id, pages
                     )
         return response
 
-    elif text == "1*1*2":
+    elif text == f"{lang_id}*1*2":
         response = get_response(
-                        pages, "1*2"
+                        pages, f"{lang_id}*2"
                     )
         return response
 
-    elif get_text(text, 3) == "1*1*2":
+    elif get_text(text, 3) == f"{lang_id}*1*2":
         list_len = len(text_list)
         response = get_health_status(
                         list_len, text_list,
-                        health_status, pages
+                        health_status, lang_id, pages
                     )
         return response
 
