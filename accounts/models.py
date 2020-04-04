@@ -56,7 +56,6 @@ class HealthStatus(BaseClass):
     tiredness = models.BooleanField(default=False)
     difficult_breath = models.BooleanField(default=False)
     sore_throat = models.BooleanField(default=False)
-    trip_with_case = models.BooleanField(default=False)
     primary_contact = models.BooleanField(default=False)    
     secondary_contact = models.BooleanField(default=False)
 
@@ -75,7 +74,6 @@ class HealthStatus(BaseClass):
             self.difficult_breath
         ):
             if (
-                self.trip_with_case or
                 self.primary_contact or
                 self.secondary_contact
             ):
@@ -85,7 +83,6 @@ class HealthStatus(BaseClass):
             else:
                 return "high"
         elif (
-            self.trip_with_case or
             self.primary_contact or
             self.secondary_contact
         ):
