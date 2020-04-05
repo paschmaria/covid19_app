@@ -93,8 +93,7 @@ class HealthStatus(BaseClass):
                 (self.fever and self.cough and self.tiredness)
             ):
                 return "medium"
-        else:
-            return "low"
+        return "low"
 
 
 class USSDUser(BaseClass):
