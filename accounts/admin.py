@@ -29,6 +29,7 @@ class HealthStatusAdmin(admin.ModelAdmin):
 
 
 class USSDUserAdmin(admin.ModelAdmin):
+    list_per_page = 50
     list_display = ('phone_number', 'language', 'state', 'lga')
     search_fields = ('phone_number', 'language')
     ordering = ('-created',)

@@ -35,7 +35,8 @@ class SurveyAdmin(admin.ModelAdmin):
 
 class SessionAdmin(admin.ModelAdmin):
     actions_on_bottom = True
-    list_display = ('session_id', 'user', 'survey', 'prev_page_id')
+    list_per_page = 50
+    list_display = ('session_id', 'created', 'user', 'survey')
     search_fields = ('user', 'survey')
     ordering = ('-created',)
 

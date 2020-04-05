@@ -7,13 +7,19 @@ from simple_history.models import HistoricalRecords
 from accounts.models import USSDUser
 
 
-class Survey(models.Model):
+class BaseClass(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class Survey(BaseClass):
     """
     Record of USSD Surveys
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(_("survey name"), max_length=100)
     service_code = models.CharField(max_length=50, db_index=True)
     history = HistoricalRecords()
@@ -22,27 +28,28 @@ class Survey(models.Model):
         return self.name
 
 
-class Session(models.Model):
+class Session(BaseClass):
     """
     Keep track of each USSD respondents session
     """
 
-    created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(USSDUser, on_delete=models.CASCADE)
-    survey = models.ForeignKey(Survey, related_name="sessions", on_delete=models.CASCADE)
+    user = models.ForeignKey(USSDUser, related_name="user_sessions", on_delete=models.CASCADE)
+    survey = models.ForeignKey(Survey, related_name="survey_sessions", on_delete=models.CASCADE)
     session_id = models.CharField(_("Session ID"), max_length=100, db_index=True)
     prev_page_id = models.CharField(max_length=50, blank=True, default="")
+
+    class Meta:
+        ordering = ("-created",)
 
     def __str__(self):
         return self.session_id
 
 
-class Page(models.Model):
+class Page(BaseClass):
     """
     Keep track of each survey page
     """
 
-    created = models.DateTimeField(auto_now_add=True)
     page_num = models.CharField(_("number"), max_length=50, db_index=True)
     text = models.CharField(max_length=225)
     extra_text = models.TextField(max_length=300, blank=True, default="")
@@ -62,12 +69,11 @@ class Page(models.Model):
         return self.text[:50]
 
 
-class Option(models.Model):
+class Option(BaseClass):
     """
     Keep track of the options for each survey page
     """
 
-    created = models.DateTimeField(auto_now_add=True)
     number = models.PositiveSmallIntegerField()
     text = models.CharField(max_length=225)
     pages = models.ManyToManyField(Page, related_name="options", related_query_name="options")
