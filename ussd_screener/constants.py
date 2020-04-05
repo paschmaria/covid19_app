@@ -1049,7 +1049,6 @@ SYMPTOMS = {
     "6": "tiredness",
     "7": "difficult_breath",
     "8": "sore_throat",
-    "9": "trip_with_case",
-    "10": "primary_contact",
-    "11": "secondary_contact"
+    "9": "primary_contact",
+    "10": "secondary_contact"
 }

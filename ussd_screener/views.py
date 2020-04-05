@@ -13,8 +13,8 @@ from .utils import (get_response, get_response_text, get_state_lga, get_text,
 
 
 def get_health_status(condition, text_list, status, lang, pages):
-    for i in range(4, 12):
-        if i < 11:
+    for i in range(4, 11):
+        if i < 10:
             # if split text length equals symptom key
             if condition == i:
                 update_status(text_list, status, str(i))
@@ -49,15 +49,14 @@ def process_request(data):
     phone_number = data.get("phoneNumber")
     text = data.get("text")
 
-    survey = Survey.objects.get(service_code=service_code)
     user = get_ussd_user(phone_number)
+    survey = Survey.objects.get(service_code=service_code)
     health_status = HealthStatus.objects.get(respondent=user)
     session = log_survey_session(user, survey, session_id)
     pages = session.survey.pages
     text_list = text.split("*")
     lang_id = text_list[0]
     response = ""
-    # print(text_list, len(text_list))
 
     if text == "":
         response = get_response(pages, "0")

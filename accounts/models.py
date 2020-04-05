@@ -93,8 +93,8 @@ class HealthStatus(BaseClass):
                 (self.fever and self.cough and self.tiredness)
             ):
                 return "medium"
-
-        return "low"
+        else:
+            return "low"
 
 
 class USSDUser(BaseClass):
@@ -119,6 +119,7 @@ class USSDUser(BaseClass):
 
     class Meta:
         verbose_name = _("USSD User")
+        ordering = ("created",)
 
     def __str__(self):
         return str(self.phone_number)
