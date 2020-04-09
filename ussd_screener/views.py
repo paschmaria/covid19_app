@@ -11,11 +11,11 @@ from .tasks import send_mail_to_admin
 from .utils import (get_response, get_response_text, get_state_lga, get_text,
                     log_survey_session, update_status)
 
+# FAD Analysis: Fear, Accusation and Doubt
 
 def get_health_status(condition, text_list, status, lang, pages):
     for i in range(4, 11):
         if i < 10:
-            # if split text length equals symptom key
             if condition == i:
                 update_status(text_list, status, str(i))
                 response = get_response(
@@ -23,11 +23,11 @@ def get_health_status(condition, text_list, status, lang, pages):
                             )
                 return response
         else:
+            update_status(text_list, status, str(i))
             if (
-                status.risk_level == "high" or
-                status.risk_level == "very high"
+                status.risk_level == "high" 
             ):
-                # send_mail_to_admin.delay(user_id=user.id)
+                send_mail_to_admin.delay(status_id=status.id)
                 response = get_response(
                                 pages, f"{lang}*{i-1}"
                             )
@@ -57,12 +57,16 @@ def process_request(data):
     text_list = text.split("*")
     lang_id = text_list[0]
     response = ""
+    # print(text_list)
 
     if text == "":
+        # get first page
         response = get_response(pages, "0")
         return response
 
     elif text in LANG_DICT:
+        # set user's default language
+        # render GDPR buy-in screen
         setattr(user, "language", LANG_DICT[text])
         user.save()
         response = get_response(
@@ -71,12 +75,14 @@ def process_request(data):
         return response
 
     elif text == f"{lang_id}*1":
+        # render LGA screen
         response = get_response(
                         pages, text
                     )
         return response
 
     elif text == f"{lang_id}*1*1" or text == f"{lang_id}*1*1*99*0":
+        # set user LGA
         state, lgas = get_state_lga(24)
         user.state = state
         user.save()
@@ -85,22 +91,27 @@ def process_request(data):
                     )
         return response
 
-    elif text == f"{lang_id}*1*1*99": # if next lga page was selected
+    elif text == f"{lang_id}*1*1*99":
+        # if next LGA screen was selected
+        # render next LGA screen (11 - 20)
         response = get_response(
-                        pages, f"{lang_id}*1*1*99"
+                        pages, text
                     )
         return response
 
     elif get_text(text, 4) == f"{lang_id}*1*1*99":
+        # if user came from second LGA screen
         _, lgas = get_state_lga(24)
         option = text_list[-1]
 
+        # if back option was selected
         if option == "0":
             response = get_response(
                         pages, f"{lang_id}*1*1"
                     )
             return response
 
+        # if next option was selected
         elif option == "99":
             response = get_response(
                         pages, f"{lang_id}*1*1*99"
@@ -108,11 +119,15 @@ def process_request(data):
             return response
 
         else:
+            # if any of the LGAs had been selected
+            # get the previous page (fever screen)
             prev_page_list = session.prev_page_id.split("*")
 
             if len(prev_page_list) > 1:
                 diff = len(text_list) - len(prev_page_list)
 
+                # as the user goes further away from the fever screen,
+                # render the subsequent screens
                 if diff >= 1:
                     diff = diff + 3
                     response = get_health_status(
@@ -123,9 +138,11 @@ def process_request(data):
 
             else:
                 for i in range(1, 21):
+                    # get selected LGA and render fever screen
                     if i == int(option):
                         user.lga = lgas[int(option)-1]['name']
                         user.save()
+                        # set fever screen as previous screen
                         session.prev_page_id = text
                         session.save()
                         response = get_response(
@@ -134,12 +151,34 @@ def process_request(data):
                         return response
 
     elif get_text(text, 3) == f"{lang_id}*1*1":
-        list_len = len(text_list)
-        response = get_health_status(
-                        list_len, text_list,
-                        health_status, lang_id, pages
+        # if any of the LGAs had been selected
+        # get the previous page (fever screen)
+        prev_page_list = session.prev_page_id.split("*")
+
+        if len(prev_page_list) > 1:
+            list_len = len(text_list)
+            condition = list_len - 1
+            response = get_health_status(
+                            condition, text_list,
+                            health_status, lang_id, pages
+                        )
+            return response
+
+        else:
+            _, lgas = get_state_lga(24)
+            option = text_list[-1]
+            for i in range(1, 21):
+                # get selected LGA and render fever screen
+                if i == int(option):
+                    user.lga = lgas[int(option)-1]['name']
+                    user.save()
+                    # set fever screen as previous screen
+                    session.prev_page_id = text
+                    session.save()
+                    response = get_response(
+                        pages, f"{lang_id}*2"
                     )
-        return response
+                    return response
 
     elif text == f"{lang_id}*1*2":
         response = get_response(

@@ -7,6 +7,7 @@ class OptionAdmin(admin.ModelAdmin):
     actions_on_bottom = True
     list_display = ('get_obj', 'get_pages', 'get_page_numbers')
     search_fields = ('number', 'text')
+    raw_id_fields = ('pages',)
 
     def get_obj(self, obj):
         return obj
@@ -22,6 +23,7 @@ class PageAdmin(admin.ModelAdmin):
     actions_on_bottom = True
     list_display = ('text', 'page_num', 'parent_number')
     search_fields = ('text',)
+    raw_id_fields = ('parent',)
 
     def parent_number(self, obj):
         if hasattr(obj.parent, 'page_num'):
@@ -38,6 +40,8 @@ class SessionAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('session_id', 'created', 'user', 'survey')
     search_fields = ('user', 'survey')
+    date_hierarchy = 'created'
+    raw_id_fields = ('user',)
     ordering = ('-created',)
 
 

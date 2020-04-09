@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from accounts.models import USSDUser
+from accounts.models import HealthStatus
 from core.celery import app
 
 
@@ -12,10 +12,10 @@ h = html2text.HTML2Text()
 h.ignore_links = True
 
 @app.task
-def send_mail_to_admin(user_id):
-    user = USSDUser.objects.get(id=user_id)
+def send_mail_to_admin(status_id):
+    status = HealthStatus.objects.get(id=status_id)
     subject = "Positive Case Detected!"
-    context = {'user': user}
+    context = {'status': status}
     html_message = render_to_string('emails/send_admin_mail.html', context)
     message = h.handle(html_message)
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,

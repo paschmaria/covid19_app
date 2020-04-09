@@ -11,43 +11,43 @@
         <tbody>
             <tr>
                 <td scope="row"><b>Phone Number</b></td>
-                <td><a href="tel:{{ user.phone_number }}">{{ user.phone_number }}</a></td>
+                <td><a href="tel:{{ status.respondent.phone_number }}">{{ status.respondent.phone_number }}</a></td>
             </tr>
             <tr>
                 <td scope="row"><b>State</b></td>
-                <td>{{ user.state }}</td>
+                <td>{{ status.respondent.state }}</td>
             </tr>
             <tr>
                 <td scope="row"><b>LGA</b></td>
-                <td>{{ user.lga }}</td>
+                <td>{{ status.respondent.lga }}</td>
             </tr>
             <tr>
                 <td scope="row"><b>Fever</b></td>
-                <td>{{ user.health_status.fever|yesno:"Yeah,No" }}</td>
+                <td>{{ status.fever|yesno:"Yeah,No" }}</td>
             </tr>
             <tr>
                 <td scope="row"><b>Cough</b></td>
-                <td>{{ user.health_status.cough|yesno:"Yeah,No" }}</td>
+                <td>{{ status.cough|yesno:"Yeah,No" }}</td>
             </tr>
             <tr>
-                <td scope="row"><b>Tiredness</b></td>
-                <td>{{ user.health_status.tiredness|yesno:"Yeah,No" }}</td>
+                <td scope="row"><b>Fatigue/Body Aches</b></td>
+                <td>{{ status.aches|yesno:"Yeah,No" }}</td>
             </tr>
             <tr>
                 <td scope="row"><b>Difficult Breath</b></td>
-                <td>{{ user.health_status.difficult_breath|yesno:"Yeah,No" }}</td>
+                <td>{{ status.difficult_breath|yesno:"Yeah,No" }}</td>
             </tr>
             <tr>
-                <td scope="row"><b>Travelled to country with over 1000 cases in last 14 days?</b></td>
-                <td>{{ user.health_status.trip_with_case|yesno:"Yeah,No" }}</td>
+                <td scope="row"><b>Sore throat</b></td>
+                <td>{{ status.sore_throat|yesno:"Yeah,No" }}</td>
             </tr>
             <tr>
                 <td scope="row"><b>Been in contact with suspected or confirmed positive case in the last 14 days?</b></td>
-                <td>{{ user.health_status.primary_contact|yesno:"Yeah,No" }}</td>
+                <td>{{ status.primary_contact|yesno:"Yeah,No" }}</td>
             </tr>
             <tr>
                 <td scope="row"><b>Been in gathering where positive case was confirmed in the last 14 days?</b></td>
-                <td>{{ user.health_status.secondary_contact|yesno:"Yeah,No" }}</td>
+                <td>{{ status.secondary_contact|yesno:"Yeah,No" }}</td>
             </tr>
         </tbody>
     </table>

@@ -1046,9 +1046,19 @@ LANG_DICT = {
 SYMPTOMS = {
     "4": 'fever',
     "5": "cough",
-    "6": "tiredness",
+    "6": "aches",
     "7": "difficult_breath",
     "8": "sore_throat",
     "9": "primary_contact",
     "10": "secondary_contact"
+}
+
+WEIGHTS = {
+    'fever' : 1,
+    "cough" : 1,
+    "aches" : 2,
+    "difficult_breath" : 2,
+    "sore_throat" : 1,
+    "primary_contact" : 3,
+    "secondary_contact" : 3
 }

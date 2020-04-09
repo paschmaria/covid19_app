@@ -5,6 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from simple_history.models import HistoricalRecords
 
 from .managers import UserManager
+from ussd_screener.constants import WEIGHTS
 
 
 class BaseClass(models.Model):
@@ -53,7 +54,7 @@ class HealthStatus(BaseClass):
 
     fever = models.BooleanField(default=False)
     cough = models.BooleanField(default=False)
-    tiredness = models.BooleanField(default=False)
+    aches = models.BooleanField(default=False)
     difficult_breath = models.BooleanField(default=False)
     sore_throat = models.BooleanField(default=False)
     primary_contact = models.BooleanField(default=False)    
@@ -67,32 +68,23 @@ class HealthStatus(BaseClass):
 
     @property
     def risk_level(self):
-        if (
-            self.fever and
-            self.cough and
-            self.tiredness and
-            self.difficult_breath
-        ):
-            if (
-                self.primary_contact or
-                self.secondary_contact
-            ):
-                return "very high"
-            elif self.sore_throat:
-                return "very high"
-            else:
-                return "high"
-        elif (
-            self.primary_contact or
-            self.secondary_contact
-        ):
-            if (
-                (self.fever and self.cough) or
-                (self.cough and self.tiredness) or
-                (self.fever and self.tiredness) or
-                (self.fever and self.cough and self.tiredness)
-            ):
-                return "medium"
+        total_weights = 0
+
+        for item in self._meta.get_fields():
+            item_name = item.name
+            item_value = getattr(self, item_name)
+
+            print(item_name, item_value)
+            if item_value and item_name in WEIGHTS:
+                total_weights += WEIGHTS[item_name]
+
+        if total_weights <= 2:
+            return "low"
+        elif total_weights > 2 and total_weights <= 5:
+            return "medium"
+        else:
+            return "high"
+
         return "low"
 
 
@@ -110,7 +102,7 @@ class USSDUser(BaseClass):
                         )
     state = models.CharField(max_length=50, blank=True, default='')
     lga = models.CharField(max_length=100, blank=True, default='')
-    health_status = models.ForeignKey(
+    health_status = models.OneToOneField(
                             HealthStatus, 
                             related_name="respondent",
                             on_delete=models.PROTECT
