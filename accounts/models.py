@@ -74,7 +74,6 @@ class HealthStatus(BaseClass):
             item_name = item.name
             item_value = getattr(self, item_name)
 
-            print(item_name, item_value)
             if item_value and item_name in WEIGHTS:
                 total_weights += WEIGHTS[item_name]
 
