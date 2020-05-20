@@ -45,6 +45,20 @@ class Session(BaseClass):
         return self.session_id
 
 
+class SurveyResponse(BaseClass):
+    """
+    Keeps track of survey responses per session
+    """
+
+    session = models.ForeignKey(Session, related_name="survey_responses", on_delete=models.CASCADE)
+    question_text = models.CharField(max_length=225)
+    response = models.CharField(max_length=100)
+    weight = models.CharField(_("weight of response"), max_length=50)
+
+    def __str__(self):
+        return self.question_text
+
+
 class Page(BaseClass):
     """
     Keep track of each survey page

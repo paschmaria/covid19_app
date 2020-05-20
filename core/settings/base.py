@@ -126,3 +126,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Emails
 MANAGERS = [('Site Admin', os.environ.get('ADMIN_EMAIL'))]
 DEFAULT_FROM_EMAIL = os.environ.get('ADMIN_EMAIL')
+
+
+BASE_API_URL = 'https://staging-api-ncdc-dashboard.azurewebsites.net'
+ASSESSMENT_ENDPOINT = '/api/v1/Assessment/AddAssessment'
+API_TOKEN = "GEPA335765B065680441C0B2FE0E7351BA4CDC7"

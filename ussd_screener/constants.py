@@ -1062,3 +1062,11 @@ WEIGHTS = {
     "primary_contact" : 3,
     "secondary_contact" : 3
 }
+
+API_PAYLOAD = {
+    "assessmentResponses": [],
+    "assessmentResult": None,
+    "phoneNumber": "",
+    "symptoms": [],
+    "stateCode": "NG-LA"
+}
