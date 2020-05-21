@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ussd_callback
+from .views2 import ussd_callback
 
 urlpatterns = [
     path(

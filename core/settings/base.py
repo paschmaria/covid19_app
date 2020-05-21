@@ -128,6 +128,14 @@ MANAGERS = [('Site Admin', os.environ.get('ADMIN_EMAIL'))]
 DEFAULT_FROM_EMAIL = os.environ.get('ADMIN_EMAIL')
 
 
+# Custom settings
+# NCDC/USSD settings
 BASE_API_URL = 'https://staging-api-ncdc-dashboard.azurewebsites.net'
-ASSESSMENT_ENDPOINT = '/api/v1/Assessment/AddAssessment'
-API_TOKEN = "GEPA335765B065680441C0B2FE0E7351BA4CDC7"
+NCDC_ENDPOINT = '/api/v1/Assessment/AddAssessment'
+API_TOKEN = os.environ.get('API_TOKEN')
+
+
+# Hollatag settings
+HOLLATAG_ENDPOINT = 'https://sms.hollatags.com/api/ussd/push/'
+HELLOTAG_USER = os.environ.get('HELLOTAG_USER')
+HELLOTAG_PASS = os.environ.get('HELLOTAG_PASS')

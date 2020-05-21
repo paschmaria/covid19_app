@@ -1,3 +1,5 @@
+import json
+
 import html2text
 import requests
 from django.conf import settings
@@ -40,11 +42,11 @@ def push_to_server(session_id):
         res_dict = {}
         res_dict['question'] = res.question_text
         res_dict['response'] = res.response
-        res_dict['score'] = res.weight
+        res_dict['score'] = int(res.weight)
         payload["assessmentResponses"].append(res_dict)
         
     payload["assessmentResult"] = assessment_score(risk)
-    payload["phoneNumber"] = str(user.phone_number)
+    payload["phoneNumber"] = str(user.phone_number).replace('+234', '0')
     payload["symptoms"] = [i.name for i in h_status._meta.get_fields() if getattr(h_status, i.name) == True]
 
     headers = {
@@ -53,8 +55,8 @@ def push_to_server(session_id):
     }
 
     r = requests.post(
-        f"{settings.BASE_API_URL}{settings.ASSESSMENT_ENDPOINT}",
-        data=payload,
+        f"{settings.BASE_API_URL}{settings.NCDC_ENDPOINT}",
+        data=json.dumps(payload),
         headers=headers
     )
     print(r.text)

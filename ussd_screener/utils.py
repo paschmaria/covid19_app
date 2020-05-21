@@ -60,7 +60,7 @@ def log_response(
         session = session, 
         question_text=text,
         response=response,
-        weight=weight
+        weight=int(weight)
     )
     response.save()
 
