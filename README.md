@@ -23,7 +23,7 @@ You can install and setup this project locally using the following steps:
 
 Download the app
 ```
-git clone https://github.com/paschmaria/covid19_app.git
+git clone https://dev.azure.com/glo-epid/_git/gloepid-ussd
 
 cd covid19_app
 ```
