@@ -43,11 +43,12 @@ def process_request(data):
     if ssn_operation == 'begin':
         # message, _, _ = get_response(pages, "0")
         response['session_operation'] = 'continue'
-        response['session_type'] = 3
+        response['session_type'] = 1
         response['session_id'] = ssn_id
         response['session_msg'] = "Welcome to eBanking.\nPlease select your payment channel.\n1) Card\n2) Bank Account\n3) Wallet"
-        response['session_from'] = ssn_from
-        return response
+        response['session_from'] = ssn_from.split('*')[1]
+
+    return response
 
 
 @csrf_exempt
