@@ -47,6 +47,27 @@ def process_request(data):
         response['session_id'] = ssn_id
         response['session_msg'] = "Welcome to eBanking.\nPlease select your payment channel.\n1) Card\n2) Bank Account\n3) Wallet"
         response['session_from'] = ssn_from.split('*')[1]
+    elif ssn_operation == 'continue':
+        response['session_operation'] = 'end'
+        response['session_type'] = 4
+        response['session_id'] = ssn_id
+
+        if ssn_msg == 1:
+            channel = 'Card'
+        elif ssn_msg == 2:
+            channel = 'Bank Account'
+        elif ssn_msg == 3:
+            channel = 'Wallet'
+        else:
+            channel = 'None'
+
+        response['session_msg'] = f"You selected -{channel}-. Have a great day."
+        response['session_from'] = ssn_from.split('*')[1]
+    else:
+        response['session_operation'] = "end"
+        response['session_type'] = 4
+        response['session_id'] = ssn_id
+        response['session_msg'] = "Thank you."
 
     return response
 
