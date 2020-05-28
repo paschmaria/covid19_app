@@ -33,35 +33,34 @@ def process_request(data):
     ssn_id = data.get("session_id")
     ssn_from = data.get("session_from")
 
-    # user = get_ussd_user(ssn_msisdn)
-    # survey = Survey.objects.get(service_code=ssn_from)
-    # health_status = HealthStatus.objects.get(respondent=user)
-    # session = log_survey_session(user, survey, ssn_id)
-    # pages = session.survey.pages
+    user = get_ussd_user(ssn_msisdn)
+    survey = Survey.objects.get(service_code=ssn_from)
+    health_status = HealthStatus.objects.get(respondent=user)
+    session = log_survey_session(user, survey, ssn_id)
+    pages = session.survey.pages
     response = {}
 
     if ssn_operation == 'begin':
-        # message, _, _ = get_response(pages, "0")
+        message, _, _ = get_response(pages, "0")
         response['session_operation'] = 'continue'
         response['session_type'] = 1
         response['session_id'] = ssn_id
-        response['session_msg'] = "Welcome to eBanking.\nPlease select your payment channel.\n1) Card\n2) Bank Account\n3) Wallet"
+        response['session_msg'] = message
         response['session_from'] = ssn_from.split('*')[1]
     elif ssn_operation == 'continue':
-        response['session_operation'] = 'end'
-        response['session_type'] = 4
+        response['session_operation'] = 'continue'
+        response['session_type'] = 1
         response['session_id'] = ssn_id
 
-        if ssn_msg == 1:
-            channel = 'Card'
-        elif ssn_msg == 2:
-            channel = 'Bank Account'
-        elif ssn_msg == 3:
-            channel = 'Wallet'
-        else:
-            channel = 'None'
+        setattr(user, "language", LANG_DICT[text])
+        user.save()
+        message, p_text, p_options = get_response(
+                                        pages, text
+                                    )
+        usr_res = get_usr_res(text, p_options)
+        log_response(session, p_text, usr_res) # language
 
-        response['session_msg'] = f"You selected -{channel}-. Have a great day."
+        response['session_msg'] = message
         response['session_from'] = ssn_from.split('*')[1]
     else:
         response['session_operation'] = "end"
