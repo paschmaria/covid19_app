@@ -9,12 +9,23 @@ def get_state_lga(index):
 
     return state, lgas
 
-def log_survey_session(user, survey, id):
-    session, _ = Session.objects.get_or_create(
+def log_survey_session(user, survey_id, id):
+    try:
+        session = Session.objects.select_related(
+                    'survey'
+                ).prefetch_related(
+                    'survey__pages'
+                ).get(
                     user=user,
-                    survey=survey,
                     session_id=id
                 )
+    except Session.DoesNotExist:
+        session = Session.objects.create(
+                    user=user,
+                    survey_id=survey_id,
+                    session_id=id
+                )
+    
     return session
 
 def get_text(text, part):
@@ -30,6 +41,7 @@ def get_response(obj, page_num):
     page = obj.get(page_num=page_num)
     parent_text = None
     parent_options = []
+    # get text for question answered by user
     if page.parent:
          parent_text  = page.parent.text.split('CON')[1].strip()
          parent_options = page.parent.options.all()

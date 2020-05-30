@@ -24,6 +24,7 @@ class PageAdmin(admin.ModelAdmin):
     list_display = ('text', 'page_num', 'parent_number')
     search_fields = ('text',)
     raw_id_fields = ('parent',)
+    save_as = True
 
     def parent_number(self, obj):
         if hasattr(obj.parent, 'page_num'):
