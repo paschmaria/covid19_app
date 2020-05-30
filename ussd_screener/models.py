@@ -68,7 +68,7 @@ class Page(BaseClass):
     text = models.CharField(max_length=225)
     extra_text = models.TextField(max_length=300, blank=True, default="")
     parent = models.ForeignKey(
-                        "self", related_name=_("next_page"),
+                        "self", related_name="next_page",
                         blank=True, null=True,
                         on_delete=models.CASCADE
                     )

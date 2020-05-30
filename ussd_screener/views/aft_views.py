@@ -5,10 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from accounts.models import HealthStatus
 from accounts.utils import get_ussd_user
 
-from .constants import LANG_DICT, API_PAYLOAD, WEIGHTS
-from .models import Option, Page, Session, Survey
-from .tasks import send_mail_to_admin, push_to_server
-from .utils import (get_response, get_response_text, get_state_lga, get_text, get_usr_res,
+from ..constants import LANG_DICT, API_PAYLOAD, WEIGHTS
+from ..models import Option, Page, Session, Survey
+from ..tasks import send_mail_to_admin, push_to_server
+from ..utils import (get_response, get_response_text, get_state_lga, get_text, get_usr_res,
                     log_survey_session, log_response, update_status)
 
 # FAD Analysis: Fear, Accusation and Doubt
@@ -60,12 +60,12 @@ def process_request(data):
     user = get_ussd_user(phone_number)
     survey = Survey.objects.get(service_code=service_code)
     health_status = HealthStatus.objects.get(respondent=user)
-    session = log_survey_session(user, survey, session_id)
+    session = log_survey_session(user, survey.id, session_id)
     pages = session.survey.pages
     text_list = text.split("*")
     lang_id = text_list[0]
     response = ""
-    # print(text_list)
+    # print(session.survey.pages.all())
 
     if text == "":
         # get first page

@@ -1,11 +1,17 @@
 from django.urls import path
 
-from .views2 import ussd_callback
+from .views.aft_views import ussd_callback as aft
+from .views.htg_views import ussd_callback as htg
 
 urlpatterns = [
     path(
         "ussd-screener-callback/",
-        ussd_callback,
+        htg,
         name="ussd-screener-callback"
+    ),
+    path(
+        "aft-ussd-callback/",
+        aft,
+        name="aft-ussd-callback"
     )
 ]

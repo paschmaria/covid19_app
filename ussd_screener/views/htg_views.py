@@ -8,10 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from accounts.models import HealthStatus
 from accounts.utils import get_ussd_user
 
-from .constants import LANG_DICT, API_PAYLOAD, WEIGHTS
-from .models import Option, Page, Session, Survey
-from .tasks import send_mail_to_admin, push_to_server
-from .utils import (get_response, get_response_text, get_state_lga, get_text, get_usr_res,
+from ussd_screener.constants import LANG_DICT, API_PAYLOAD, WEIGHTS
+from ussd_screener.models import Option, Page, Session, Survey
+from ussd_screener.tasks import send_mail_to_admin, push_to_server
+from ussd_screener.utils import (get_response, get_response_text, get_state_lga, get_text, get_usr_res,
                     log_survey_session, log_response, update_status)
 
 
@@ -25,7 +25,6 @@ def process_request(data):
     session_from (str): Originating USSD code
     session_mno (str): Mobile Network Operator
     """
-    print(data)
     ssn_msisdn = data.get("session_msisdn")
     ssn_operation = data.get("session_operation")
     ssn_type = data.get("session_type")
@@ -36,7 +35,7 @@ def process_request(data):
     user = get_ussd_user(ssn_msisdn)
     survey = Survey.objects.get(service_code=ssn_from)
     health_status = HealthStatus.objects.get(respondent=user)
-    session = log_survey_session(user, survey, ssn_id)
+    session = log_survey_session(user, survey.id, ssn_id)
     pages = session.survey.pages
     response = {}
 
@@ -51,13 +50,14 @@ def process_request(data):
         response['session_operation'] = 'continue'
         response['session_type'] = 1
         response['session_id'] = ssn_id
+        print(pages)
 
-        setattr(user, "language", LANG_DICT[text])
+        setattr(user, "language", LANG_DICT[ssn_msg])
         user.save()
         message, p_text, p_options = get_response(
-                                        pages, text
+                                        pages, ssn_msg
                                     )
-        usr_res = get_usr_res(text, p_options)
+        usr_res = get_usr_res(ssn_msg, p_options)
         log_response(session, p_text, usr_res) # language
 
         response['session_msg'] = message
