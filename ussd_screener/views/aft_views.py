@@ -8,7 +8,7 @@ from accounts.utils import get_ussd_user
 from ..constants import LANG_DICT, API_PAYLOAD, WEIGHTS
 from ..models import Option, Page, Session, Survey
 from ..tasks import send_mail_to_admin, push_to_server
-from ..utils import (get_response, get_response_text, get_state_lga, get_text, get_usr_res,
+from ..utils import (get_response, get_response_text, get_location, get_text, get_usr_res,
                     log_survey_session, log_response, update_status)
 
 # FAD Analysis: Fear, Accusation and Doubt
@@ -94,8 +94,8 @@ def process_request(data):
         return response
 
     elif text == f"{lang_id}*1*1" or text == f"{lang_id}*1*1*99*0":
-        # set user LGA
-        state, lgas = get_state_lga(24)
+        # save User's State
+        state, lgas = get_location(24)
         user.state = state
         user.save()
         response, p_text, p_options = get_response(
@@ -115,7 +115,7 @@ def process_request(data):
 
     elif get_text(text, 4) == f"{lang_id}*1*1*99":
         # if user came from second LGA screen
-        _, lgas = get_state_lga(24)
+        _, lgas = get_location(24, lga=True)
         option = text_list[-1]
 
         # if back option was selected
@@ -180,7 +180,7 @@ def process_request(data):
             return response
 
         else:
-            _, lgas = get_state_lga(24)
+            _, lgas = get_location(24)
             option = text_list[-1]
             for i in range(1, 21):
                 # get selected LGA and render fever screen

@@ -10,8 +10,9 @@ from accounts.utils import get_ussd_user
 
 from ussd_screener.constants import LANG_DICT, API_PAYLOAD, WEIGHTS
 from ussd_screener.models import Option, Page, Session, Survey
+from ussd_screener.services import USSDService
 from ussd_screener.tasks import send_mail_to_admin, push_to_server
-from ussd_screener.utils import (get_response, get_response_text, get_state_lga, get_text, get_usr_res,
+from ussd_screener.utils import (get_response, get_response_text, get_location, get_text, get_usr_res,
                     log_survey_session, log_response, update_status)
 
 
@@ -73,5 +74,7 @@ def process_request(data):
 
 @csrf_exempt
 def ussd_callback(request):
-    response = process_request(request.GET)
+    print(request.GET)
+    ussd_data = USSDService(request.GET)
+    response = ussd_data.render_response()
     return JsonResponse(response)
