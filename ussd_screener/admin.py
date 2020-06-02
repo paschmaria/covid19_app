@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Option, Page, Session, Survey
+from .models import Option, Page, Session, Survey, SurveyResponse
 
 
 class OptionAdmin(admin.ModelAdmin):
@@ -36,6 +36,10 @@ class SurveyAdmin(admin.ModelAdmin):
     pass
 
 
+class SurveyResponseAdmin(admin.ModelAdmin):
+    pass
+
+
 class SessionAdmin(admin.ModelAdmin):
     actions_on_bottom = True
     list_per_page = 50
@@ -49,4 +53,5 @@ class SessionAdmin(admin.ModelAdmin):
 admin.site.register(Option, OptionAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Survey, SurveyAdmin)
+admin.site.register(SurveyResponse, SurveyResponseAdmin)
 admin.site.register(Session, SessionAdmin)
