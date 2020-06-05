@@ -66,5 +66,3 @@ $ python manage.py loaddata dumped_data.json
 
 $ python manage.py runserver
 ```
-
-Head over to <http://localhost:8000/> in your browser.
