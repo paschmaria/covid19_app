@@ -57,5 +57,7 @@ Update DB and run app
 ```
 python manage.py migrate
 
+python manage.py loaddata dumped_data.json
+
 python manage.py runserver
 ```

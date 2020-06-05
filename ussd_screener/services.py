@@ -1,16 +1,24 @@
 from accounts.models import HealthStatus
 from accounts.utils import get_ussd_user
 
-from ussd_screener.constants import LANG_DICT, API_PAYLOAD, WEIGHTS
-from ussd_screener.models import Option, Page, Session, Survey
+from ussd_screener.constants import LANG_DICT, WEIGHTS, HTG_SYMPTOMS
+from ussd_screener.models import Survey
 from ussd_screener.tasks import send_mail_to_admin, push_to_server
-from ussd_screener.utils import (clean, get_response, get_response_text, get_location, get_text, get_usr_res,
-                    log_survey_session, log_response, update_status)
+from ussd_screener.utils import (clean, get_response_text, get_location,
+                                log_survey_session, log_response)
 
 
 class USSDService:
     """
     Service class for managing entire USSD workflow
+
+    :param int session_msisdn: User Phone number (in international format)
+    :param str session_operation: USSD Operation category (one of begin, continue, end or abort)
+    :param str session_type: USSD message content (one of 1, 2, 3, or 4) See https://docs.hollatags.com/ussd/inbound#inbound
+    :param int session_msg: USSD message content (must be <= 160 chars)
+    :param int session_id: User session ID
+    :param str session_from: Originating USSD code
+    :param str session_mno: Mobile Network Operator
     """
 
     def __init__(self, data):
@@ -96,57 +104,71 @@ class USSDService:
             elif prev_page_id == f"{lang_id}*2":
                 if clean(self.ssn_msg) == "1":
                     self.health_status.fever = True
-                    self.health_status.save()
-
+                else:
+                    self.health_status.fever = False
+                
+                self.health_status.save()
                 # render cough screen
                 page_num = f"{lang_id}*3"
                 self.ssn_operation = 'continue'
             elif prev_page_id == f"{lang_id}*3":
                 if clean(self.ssn_msg) == "1":
                     self.health_status.cough = True
-                    self.health_status.save()
+                else:
+                    self.health_status.cough = False
 
+                self.health_status.save()
                 # render aches screen
                 page_num = f"{lang_id}*4"
                 self.ssn_operation = 'continue'
             elif prev_page_id == f"{lang_id}*4":
                 if clean(self.ssn_msg) == "1":
                     self.health_status.aches = True
-                    self.health_status.save()
-
+                else:
+                    self.health_status.aches = False
+                
+                self.health_status.save()
                 # render difficulty in breathing screen
                 page_num = f"{lang_id}*5"
                 self.ssn_operation = 'continue'
             elif prev_page_id == f"{lang_id}*5":
                 if clean(self.ssn_msg) == "1":
                     self.health_status.difficult_breath = True
-                    self.health_status.save()
+                else:
+                    self.health_status.difficult_breath = False
 
+                self.health_status.save()
                 # render sore throat screen
                 page_num = f"{lang_id}*6"
                 self.ssn_operation = 'continue'
             elif prev_page_id == f"{lang_id}*6":
                 if clean(self.ssn_msg) == "1":
                     self.health_status.sore_throat = True
-                    self.health_status.save()
+                else:
+                    self.health_status.sore_throat = False
 
+                self.health_status.save()
                 # render primary contact screen
                 page_num = f"{lang_id}*7"
                 self.ssn_operation = 'continue'
             elif prev_page_id == f"{lang_id}*7":
+                if clean(self.ssn_msg) == "1":
+                    self.health_status.primary_contact = True
+                else:
+                    self.health_status.primary_contact = False
+
+                self.health_status.save()
                 # render secondary contact screen
                 page_num = f"{lang_id}*8"
                 self.ssn_operation = 'continue'
-
-                if clean(self.ssn_msg) == "1":
-                    self.health_status.primary_contact = True
-                    self.health_status.save()
                 
             elif prev_page_id == f"{lang_id}*8":
-
                 if clean(self.ssn_msg) == "1":
                     self.health_status.secondary_contact = True
-                    self.health_status.save()
+                else:
+                    self.health_status.secondary_contact = False
+                
+                self.health_status.save()
 
                 if self.health_status.risk_level == 'low':
                     # render low risk screen
@@ -198,8 +220,6 @@ class USSDService:
 
     def log_response(self, page):
         parent = page.parent
-        parent_text = ''
-        chosen_option = ''
         weight = 0
 
         # first, get previous page text and
@@ -218,10 +238,14 @@ class USSDService:
             else:
                 option_index = int(option) - 11
 
-            # get option chosen by user
-            chosen_option = parent_options[option_index]
+            parent_id = parent.page_num.split('*', 1)[-1]
+            if parent_id in HTG_SYMPTOMS:
+                symptom = HTG_SYMPTOMS[parent_id]
+                weight = WEIGHTS[symptom]
 
-        log_response(self.session, parent_text, chosen_option, weight)
+            # get option chosen by user
+            chosen_option = parent_options[option_index].text
+            log_response(self.session.pk, parent_text, chosen_option, weight)
 
     def render_response(self):
         msg = self.process_request()
@@ -231,5 +255,4 @@ class USSDService:
         response['session_id'] = self.ssn_id
         response['session_msg'] = msg
         response['session_from'] = self.ssn_from.split('*')[1]
-        print(response)
         return response

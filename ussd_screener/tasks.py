@@ -32,7 +32,9 @@ def send_mail_to_admin(status_id):
 @app.task
 def push_to_server(session_id):
     payload = API_PAYLOAD
-    session = Session.objects.get(session_id=session_id)
+    session = Session.objects.prefetch_related(
+                'survey_responses'
+                ).get(session_id=session_id)
     responses = session.survey_responses.all()
     user = session.user
     h_status = user.health_status
@@ -46,7 +48,7 @@ def push_to_server(session_id):
         payload["assessmentResponses"].append(res_dict)
         
     payload["assessmentResult"] = assessment_score(risk)
-    payload["phoneNumber"] = str(user.phone_number).replace('+234', '0')
+    payload["phoneNumber"] = str(user.phone_number).replace('234', '0')
     payload["symptoms"] = [i.name for i in h_status._meta.get_fields() if getattr(h_status, i.name) == True]
 
     headers = {
