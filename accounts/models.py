@@ -62,6 +62,7 @@ class HealthStatus(BaseClass):
 
     class Meta:
         verbose_name_plural = _("Health Status")
+        get_latest_by = ("created",)
 
     def __str__(self):
         return self.risk_level 
@@ -110,6 +111,7 @@ class USSDUser(BaseClass):
     class Meta:
         verbose_name = _("USSD User")
         ordering = ("created",)
+        get_latest_by = ("created",)
 
     def __str__(self):
         return str(self.phone_number)

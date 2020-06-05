@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Option, Page, Session, Survey
+from .models import Option, Page, Session, Survey, SurveyResponse
 
 
 class OptionAdmin(admin.ModelAdmin):
@@ -24,6 +24,7 @@ class PageAdmin(admin.ModelAdmin):
     list_display = ('text', 'page_num', 'parent_number')
     search_fields = ('text',)
     raw_id_fields = ('parent',)
+    save_as = True
 
     def parent_number(self, obj):
         if hasattr(obj.parent, 'page_num'):
@@ -32,6 +33,10 @@ class PageAdmin(admin.ModelAdmin):
 
 
 class SurveyAdmin(admin.ModelAdmin):
+    pass
+
+
+class SurveyResponseAdmin(admin.ModelAdmin):
     pass
 
 
@@ -48,4 +53,5 @@ class SessionAdmin(admin.ModelAdmin):
 admin.site.register(Option, OptionAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Survey, SurveyAdmin)
+admin.site.register(SurveyResponse, SurveyResponseAdmin)
 admin.site.register(Session, SessionAdmin)
