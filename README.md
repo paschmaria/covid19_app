@@ -37,13 +37,13 @@ source venv/bin/activate
 
 Create a `local.env` file in the `env` directory
 
-Create a Postgres database and add DB settings to the `local.env` file
+Create database and add DB settings to the `local.env` file
 
 Update the following on the `local.env` file:
 ```
 DJANGO_SETTINGS_MODULE=core.settings.local
 
-SECRET_KEY=YOUR_RANDOM_SECRET_KEY
+SECRET_KEY=YOUR_SECRET_KEY
 
 DEBUG_VALUE=True
 ```
@@ -56,6 +56,8 @@ pip install -r requirements.txt
 Update DB and run app
 ```
 python manage.py migrate
+
+python manage.py loaddata dumped_data.json
 
 python manage.py runserver
 ```
