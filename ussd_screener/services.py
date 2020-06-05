@@ -48,10 +48,6 @@ class USSDService:
         else:
             lang_id = pp_id_list[0]
             self.ssn_type = 1
-            # get the previous page and all its next pages
-            # prev_page = self.pages.prefetch_related(
-            #             'next_pages'
-            #         ).get(page_num=prev_page_id)
 
             if prev_page_id == '0':
                 # render consent buy-in
