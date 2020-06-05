@@ -17,22 +17,26 @@ Django 3.0.x
 PostgreSQL 12.2
 ```
 
+You can get Python [here](https://www.python.org/downloads/release/python-370/) and PostgreSQL [here](https://www.postgresql.org/download/)
+
 ### Installation
 
 You can install and setup this project locally using the following steps:
 
-Download the app
+Download the app from the Azure Repo
 ```
-git clone https://dev.azure.com/glo-epid/_git/gloepid-ussd
+$ git clone https://dev.azure.com/glo-epid/_git/gloepid-ussd
 
-cd covid19_app
+$ cd covid19_app
 ```
 
-Setup a virtual environment (Ubuntu OS)
-```
-virtualenv venv
+Setup a virtual environment
 
-source venv/bin/activate
+I'll recommend using [virtualenv](http://www.virtualenv.org/en/latest/).
+```
+$ virtualenv venv
+
+$ source venv/bin/activate
 ```
 
 Create a `local.env` file in the `env` directory
@@ -48,16 +52,17 @@ SECRET_KEY=YOUR_SECRET_KEY
 DEBUG_VALUE=True
 ```
 
-Install requirements
+Next, install the dependencies using [pip](http://www.pip-installer.org/en/latest/), from the
+current directory:
 ```
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
-Update DB and run app
+Update DB and run application server
 ```
-python manage.py migrate
+$ python manage.py migrate
 
-python manage.py loaddata dumped_data.json
+$ python manage.py loaddata dumped_data.json
 
-python manage.py runserver
+$ python manage.py runserver
 ```
