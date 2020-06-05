@@ -17,6 +17,8 @@ Django 3.0.x
 PostgreSQL 12.2
 ```
 
+You can get Python [here](https://www.python.org/downloads/release/python-370/) and PostgreSQL [here](https://www.postgresql.org/download/)
+
 ### Installation
 
 You can install and setup this project locally using the following steps:
