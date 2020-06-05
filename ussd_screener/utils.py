@@ -72,12 +72,12 @@ def update_status(text_list, obj, index):
     return option, SYMPTOMS[index]
 
 def log_response(
-    session, text,
+    session_id, text,
     response, weight=0
 ):
     """Log each survey response"""
     response = SurveyResponse(
-        session = session, 
+        session_id=session_id, 
         question_text=text,
         response=response,
         weight=int(weight)

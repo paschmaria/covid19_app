@@ -1053,6 +1053,16 @@ SYMPTOMS = {
     "10": "secondary_contact"
 }
 
+HTG_SYMPTOMS = {
+    "2": 'fever',
+    "3": "cough",
+    "4": "aches",
+    "5": "difficult_breath",
+    "6": "sore_throat",
+    "7": "primary_contact",
+    "8": "secondary_contact"
+}
+
 WEIGHTS = {
     'fever' : 1,
     "cough" : 1,
@@ -1069,4 +1079,22 @@ API_PAYLOAD = {
     "phoneNumber": "",
     "symptoms": [],
     "stateCode": "NG-LA"
+}
+
+dic = {
+    'assessmentResponses': [
+        {'question': 'Have you been in a gathering where someone later tested positive to COVID-19 in the last 14 days?', 'response': 'No', 'score': 0},
+        {'question': 'Have you been in contact with anyone suspected or confirmed to test positive to COVID-19 in the last 14 days?', 'response': 'No', 'score': 0},
+        {'question': 'Do you have sore throat?', 'response': 'No', 'score': 0},
+        {'question': 'Do you find it difficult to breathe?', 'response': 'No', 'score': 0},
+        {'question': 'Are you experiencing headaches or body aches?', 'response': 'No', 'score': 0},
+        {'question': 'Do you have a continuous cough?', 'response': 'No', 'score': 0},
+        {'question': 'Do you have a high body temperature (Fever)?', 'response': 'No', 'score': 0},
+        {'question': 'Choose LGA', 'response': 'Ikeja', 'score': 0},
+        {'question': 'The data from this survey would be used to support the government in overcoming COVID-19.', 'response': 'I understand', 'score': 0}, {'question': 'Please select your default language:', 'response': 'English', 'score': 0}
+    ],
+    'assessmentResult': 2,
+    'phoneNumber': '2348106129023',
+    'symptoms': [],
+    'stateCode': 'NG-LA'
 }
