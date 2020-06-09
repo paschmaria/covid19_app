@@ -24,7 +24,7 @@ def get_health_status(condition, text_list, session, status, lang, pages):
                             )
                 usr_res = get_usr_res(text, p_options)
                 weight = WEIGHTS[symptom]
-                log_response(session, p_text, usr_res, weight=weight) # health status
+                log_response(session.pk, p_text, usr_res, weight=weight) # health status
                 return response
         else:
             text, symptom = update_status(text_list, status, str(i))
@@ -46,7 +46,7 @@ def get_health_status(condition, text_list, session, status, lang, pages):
 
             usr_res = get_usr_res(text, p_options)
             weight = WEIGHTS[symptom]
-            log_response(session, p_text, usr_res, weight=weight) # health status
+            log_response(session.pk, p_text, usr_res, weight=weight) # health status
             push_to_server.delay(session_id=session.session_id)
             return response
 
@@ -81,7 +81,7 @@ def process_request(data):
                                         pages, text
                                     )
         usr_res = get_usr_res(text, p_options)
-        log_response(session, p_text, usr_res) # language
+        log_response(session.pk, p_text, usr_res) # language
         return response
 
     elif text == f"{lang_id}*1":
@@ -90,7 +90,7 @@ def process_request(data):
                         pages, text
                     )
         usr_res = get_usr_res(1, p_options)
-        log_response(session, p_text, usr_res) # GDPR buyin
+        log_response(session.pk, p_text, usr_res) # GDPR buyin
         return response
 
     elif text == f"{lang_id}*1*1" or text == f"{lang_id}*1*1*99*0":
@@ -102,7 +102,7 @@ def process_request(data):
                         pages, f"{lang_id}*1*1"
                     )
         usr_res = get_usr_res(1, p_options)
-        log_response(session, p_text, usr_res) # State
+        log_response(session.pk, p_text, usr_res) # State
         return response
 
     elif text == f"{lang_id}*1*1*99":
@@ -162,7 +162,7 @@ def process_request(data):
                         response, p_text, p_options = get_response(
                             pages, f"{lang_id}*2"
                         )
-                        log_response(session, p_text, lga) # LGA
+                        log_response(session.pk, p_text, lga) # LGA
                         return response
 
     elif get_text(text, 3) == f"{lang_id}*1*1":
@@ -194,14 +194,14 @@ def process_request(data):
                     response, p_text, p_options = get_response(
                         pages, f"{lang_id}*2"
                     )
-                    log_response(session, p_text, lga) # LGA
+                    log_response(session.pk, p_text, lga) # LGA
                     return response
 
     elif text == f"{lang_id}*1*2":
         response, p_text, p_options = get_response(
                         pages, f"{lang_id}*2"
                     )
-        log_response(session, p_text, "No") # GDPR buyin
+        log_response(session.pk, p_text, "No") # GDPR buyin
         return response
 
     elif get_text(text, 3) == f"{lang_id}*1*2":
