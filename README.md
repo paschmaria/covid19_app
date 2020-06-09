@@ -19,7 +19,7 @@ PostgreSQL 12.2
 
 You can get Python [here](https://www.python.org/downloads/release/python-370/) and PostgreSQL [here](https://www.postgresql.org/download/)
 
-### Installation
+### Set Up Locally
 
 You can install and setup this project locally using the following steps:
 
@@ -49,20 +49,58 @@ DJANGO_SETTINGS_MODULE=core.settings.local
 
 SECRET_KEY=YOUR_SECRET_KEY
 
-DEBUG_VALUE=True
+DB_NAME=YOUR_DB_NAME
+
+DB_USER=YOUR_DB_USERNAME
+
+DB_PASSWORD=YOUR_DB_PASSWORD
+
+DB_HOST=YOUR_DB_HOST
+
+DB_PORT=YOUR_DB_PORT
 ```
 
 Next, install the dependencies using [pip](http://www.pip-installer.org/en/latest/), from the
 current directory:
 ```
-$ pip install -r requirements.txt
+(venv) $ pip install -r requirements.txt
 ```
 
 Update DB and run application server
 ```
-$ python manage.py migrate
+(venv) $ python manage.py migrate
 
-$ python manage.py loaddata dumped_data.json
+(venv) $ python manage.py loaddata dumped_data.json5432
 
-$ python manage.py runserver
+(venv) $ python manage.py runserver
 ```
+
+### Deploying to Production
+
+First, update the `prod.env` file using the following:
+```
+DB_NAME=YOUR_DB_NAME
+
+DB_USER=YOUR_DB_USERNAME
+
+DB_PASSWORD=YOUR_DB_PASSWORD
+
+DB_HOST=YOUR_DB_HOST
+
+DB_PORT=YOUR_DB_PORT
+
+EMAIL_PORT=587
+```
+
+If you're using SendGrid for the mails, also update the following:
+```
+SENDGRID_API_KEY=YOUR_SENDGRID_API_KEY
+
+SENDGRID_PASSWORD=YOUR_SENDGRID_API_KEY
+
+SENDGRID_USERNAME=apikey
+
+EMAIL_HOST=smtp.sendgrid.net
+```
+
+If you need to, you can read up on how to deploy a Django app on Azure App Services [here](https://medium.com/@DawlysD/deploying-django-apps-with-postgresql-on-azure-app-services-from-scratch-fe4a10db5e7c) and [here](https://stories.mlh.io/deploying-a-basic-django-app-using-azure-app-services-71ec3b21db08).

@@ -224,15 +224,16 @@ class USSDService:
             parent_text = parent.text.strip()
             parent_options = parent.options.all()
             option = clean(self.ssn_msg)
+            option = int(option)
             
-            if int(option) == 0:
-                option_index = int(option)
-            elif int(option) == 99:
+            if option == 0:
+                option_index = option
+            elif option == 99:
                 option_index = 10
-            elif int(option) <= 10:
-                option_index = int(option) - 1
+            elif option <= 10:
+                option_index = option - 1
             else:
-                option_index = int(option) - 11
+                option_index = option - 11
 
             parent_id = parent.page_num.split('*', 1)[-1]
             if parent_id in HTG_SYMPTOMS:
